@@ -23,8 +23,19 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.getPost()
 
-        viewModel.myResponse.observe(this) {
-            println(it.userId.toString())
+        viewModel.myResponse.observe(this) { response ->
+            if (response.isSuccessful) {
+                response?.let {
+                    println(it.body()!!.id)
+                    println(it.body()!!.userId)
+                    println(it.body()!!.title)
+                    println(it.body()!!.body)
+                    binding.textView.text = it.body()!!.title
+                }
+            }else {
+                println(response.errorBody())
+                binding.textView.text = response.code().toString()
+            }
         }
     }
 }
